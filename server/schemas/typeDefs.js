@@ -4,8 +4,18 @@ const { gql } = require('apollo-server-express');
 // create our typeDefs
 // type Thought: instruct the thoughts query so that each thought that
 // returns can include those properties w respective GraphQL scalars
-// type Query: query to retrieve all thoughts, 
+// type Query: query to retrieve users, a user, thoughts, a thought
+// type Mutation: create, update, delete: login, addUser
 const typeDefs = gql`
+    type User {
+        _id: ID
+        username: String
+        email: String
+        friendCount: Int
+        thoughts: [Thought]
+        friends: [User]
+    }
+
     type Thought {
         _id: ID
         thoughtText: String
@@ -22,20 +32,25 @@ const typeDefs = gql`
         username: String
     }
 
-    type User {
-        _id: ID
-        username: String
-        email: String
-        friendCount: Int
-        thoughts: [Thought]
-        friends: [User]
+    type Auth {
+        token: ID!
+        user: User
     }
 
     type Query {
+        me: User
         users: [User]
         user(username: String!): User
         thoughts(username: String): [Thought]
         thought(_id: ID!): Thought
+    }
+
+    type Mutation {
+        login(email: String!, password: String!): Auth
+        addUser(username: String!, email: String!, password: String!): Auth
+        addThought(thoughtText: String!): Thought
+        addReaction(thoughtId: ID!, reactionBody: String!): Thought
+        addFriend(friendId: ID!): User
     }
 `;
 
